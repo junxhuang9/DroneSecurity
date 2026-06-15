@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>DJI Drone-ID IQ 解调工作报告</title>
+<style>body{font-family:system-ui,sans-serif;line-height:1.5;margin:2rem;max-width:1200px}pre{white-space:pre-wrap;background:#f6f8fa;padding:1rem;border-radius:8px;overflow:auto}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:.45rem;vertical-align:top}th{background:#f0f0f0}.ok{color:#087f23;font-weight:700}.warn{color:#9a6700;font-weight:700}</style></head>
+<body>
+<h1>RUB-SysSec/DroneSecurity — DJI OcuSync 2.0 Drone-ID sample IQ 验证与解调工作报告</h1>
+<p><strong>生成时间：</strong>2026-06-15T00:52:22.523238+00:00</p>
+<p class="ok"><strong>结论：</strong>已确认仓库包含 DJI Drone-ID / RID 相关 IQ 样本；README 明确说明 samples/ 目录为 OcuSync 2.0 Drone-ID 捕获，并给出 mini2_sm 与 mavic_air_2 的解码结果。</p>
+<h2>工作计划与进度</h2>
+<ol>
+<li>读取仓库说明与样本目录，确认是否为 DJI OcuSync 2.0 Drone-ID IQ 数据。<strong>已完成</strong></li>
+<li>编写可重复运行的 Python 报告/解调驱动程序，调用现有离线解码器并解析 RID 字段。<strong>已完成初版</strong></li>
+<li>尝试对样本执行解调，提取经纬度、高度、序列号、机型、CRC 等字段。<strong>已启动；结果见下表和日志</strong></li>
+<li>下一步：在可安装 numpy/scipy/crcmod/bitarray/matplotlib 的环境中运行本脚本，或修复依赖后继续优化同步、QPSK 相位、CRC 过滤和坐标导出。</li>
+</ol>
+<h2>样本与解调摘要</h2>
+<table><thead><tr><th>样本</th><th>存在</th><th>大小</th><th>解码器返回码</th><th>Payload 数</th><th>CRC OK</th><th>无人机坐标样例</th><th>App 坐标样例</th></tr></thead><tbody><tr><td>samples/mini2_sm</td><td>True</td><td>5,820,000</td><td>1</td><td>0</td><td>0</td><td>[]</td><td>[]</td></tr><tr><td>samples/mavic_air_2</td><td>True</td><td>1,802,240</td><td>1</td><td>0</td><td>0</td><td>[]</td><td>[]</td></tr></tbody></table>
+<h2>README 中已公开的 RID 详细数据（用于确认样本内容）</h2>
+<pre>{
+  &quot;payloads&quot;: [
+    {
+      &quot;pkt_len&quot;: 88,
+      &quot;unk&quot;: 16,
+      &quot;version&quot;: 2,
+      &quot;sequence_number&quot;: 878,
+      &quot;state_info&quot;: 8179,
+      &quot;serial_number&quot;: &quot;SecureStorage?&quot;,
+      &quot;longitude&quot;: 7.267960786785307,
+      &quot;latitude&quot;: 51.446866781640146,
+      &quot;altitude&quot;: 39.32,
+      &quot;height&quot;: 5.49,
+      &quot;v_north&quot;: 0,
+      &quot;v_east&quot;: -7,
+      &quot;v_up&quot;: 0,
+      &quot;d_1_angle&quot;: 16900,
+      &quot;gps_time&quot;: 1650894901980,
+      &quot;app_lat&quot;: 43.26826445428658,
+      &quot;app_lon&quot;: 6.640125363111847,
+      &quot;longitude_home&quot;: 7.26794359805882,
+      &quot;latitude_home&quot;: 51.446883970366635,
+      &quot;device_type&quot;: &quot;Mini 2&quot;,
+      &quot;uuid_len&quot;: 0,
+      &quot;uuid&quot;: &quot;&quot;,
+      &quot;crc-packet&quot;: &quot;c935&quot;,
+      &quot;crc-calculated&quot;: &quot;c935&quot;
+    }
+  ],
+  &quot;drone_coordinates&quot;: [
+    [
+      51.446866781640146,
+      7.267960786785307,
+      5.49
+    ]
+  ],
+  &quot;app_coordinates&quot;: [
+    [
+      43.26826445428658,
+      6.640125363111847
+    ]
+  ]
+}</pre>
+<h2>仓库 README 证据摘录</h2>
+<pre>## Sample Files
+
+We provide sample files in the `samples/` folder.
+
+The samples were directly dumped from the first stage of the live receiver that
+*detects* candidate frames and performs no other data processing; it usually hands
+them directly to the rest of the code that you can test offline.
+
+You can use `inspectrum` to visualize the raw sample file:
+
+```
+sudo apt install inspectrum
+inspectrum -r 50e6 samples/mini2_sm
+```
+
+&lt;img alt=&quot;Inspectrum screenshot of Drone-ID bursts&quot; width=500 src=&quot;./img/inspectrum.png&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+## Quick Start (Offline)
+
+Create a virtual environment for Python and install the requirements:
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install -r requirements.txt 
+```
+
+You can now run the decoder on the sample file:
+```
+./src/droneid_receiver_offline.py -i samples/mini2_sm
+```
+
+### Results
+
+The script performs detection and decoding just as the live receiver would. It prints the decoded payload for each Drone-ID frame:
+
+```json
+## Drone-ID Payload ##
+{
+    &quot;pkt_len&quot;: 88,
+    &quot;unk&quot;: 16,
+    &quot;version&quot;: 2,
+    &quot;sequence_number&quot;: 878,
+    &quot;state_info&quot;: 8179,
+    &quot;serial_number&quot;: &quot;SecureStorage?&quot;,
+    &quot;longitude&quot;: 7.267960786785307,
+    &quot;latitude&quot;: 51.446866781640146,
+    &quot;altitude&quot;: 39.32,
+    &quot;height&quot;: 5.49,
+    &quot;v_north&quot;: 0,
+    &quot;v_east&quot;: -7,
+    &quot;v_up&quot;: 0,
+    &quot;d_1_angle&quot;: 16900,
+    &quot;gps_time&quot;: 1650894901980,
+    &quot;app_lat&quot;: 43.26826445428658,
+    &quot;app_lon&quot;: 6.640125363111847,
+    &quot;longitude_home&quot;: 7.26794359805882,
+    &quot;latitude_home&quot;: 51.446883970366635,
+    &quot;device_type&quot;: &quot;Mini 2&quot;,
+    &quot;uuid_len&quot;: 0,
+    &quot;uuid&quot;: &quot;&quot;,
+    &quot;crc-packet&quot;: &quot;c935&quot;,
+    &quot;crc-calculated&quot;: &quot;c935&quot;
+}
+```
+
+The summary contains decoding stats and flight path. In the `mini2_sm` sample, the drone did not have GPS coordinates locked yet, and only the smartphone&#x27;s location is transmitted:
+```
+$ ./src/droneid_receiver_offline.py -i samples/mini2_sm
+… … …
+Frame detection: 10 candidates
+Decoder: 9 total, CRC OK: 7 (2 CRC errors)
+Drone Coordinates:
+App Coordinates:
+(51.447176178716916, 7.266528392911369)
+(51.447176178716916, 7.266528392911369)
+…
+(51.447176178716916, 7.266528392911369)
+```
+
+For `samples/mavic_air_2` both locations are transmitted:
+```
+$ ./src/droneid_receiver_offline.py -i samples/mavic_air_2
+…
+Decoder: 1 total, CRC OK: 1 (0 CRC errors)
+Drone Coordinates:
+(51.44633393111904, 7.26721594197086, 12.8)
+App Coordinates:
+(51.44620788045814, 7.267101350460944)
+```
+
+# Live Receiver
+
+The live receiver additionally requires the UHD driver and **quite powerful machines** (for captures at 50 MHz bandwidth).
+
+Environment:
+* Ettus USRP B205-mini
+* DJI mini 2, DJI Mavic Air 2
+
+First, setup the Python environment. Due to the UHD driver, this does not work with a virtual environment. If you previously activated a virtual environment, exit that environment first. Install Python requirements:
+```
+pip3 install -r requirements.txt
+```
+
+Install UHD:
+```
+sudo apt install libuhd-dev uhd-host python3-uhd
+```
+
+Run the receiver:
+
+```
+./src/droneid_receiver_live.py 
+```
+
+The receiver will hop through a list of frequencies and, if a drone is detected, lock on that band.
+
+## Deeper Dive: Script output
+
+&lt;p&gt;&lt;img alt=&quot;Processing Pipeline&quot; align=&quot;right&quot; widt
+
+---
+
+### Results
+
+The script performs detection and decoding just as the live receiver would. It prints the decoded payload for each Drone-ID frame:
+
+```json
+## Drone-ID Payload ##
+{
+    &quot;pkt_len&quot;: 88,
+    &quot;unk&quot;: 16,
+    &quot;version&quot;: 2,
+    &quot;sequence_number&quot;: 878,
+    &quot;state_info&quot;: 8179,
+    &quot;serial_number&quot;: &quot;SecureStorage?&quot;,
+    &quot;longitude&quot;: 7.267960786785307,
+    &quot;latitude&quot;: 51.446866781640146,
+    &quot;altitude&quot;: 39.32,
+    &quot;height&quot;: 5.49,
+    &quot;v_north&quot;: 0,
+    &quot;v_east&quot;: -7,
+    &quot;v_up&quot;: 0,
+    &quot;d_1_angle&quot;: 16900,
+    &quot;gps_time&quot;: 1650894901980,
+    &quot;app_lat&quot;: 43.26826445428658,
+    &quot;app_lon&quot;: 6.640125363111847,
+    &quot;longitude_home&quot;: 7.26794359805882,
+    &quot;latitude_home&quot;: 51.446883970366635,
+    &quot;device_type&quot;: &quot;Mini 2&quot;,
+    &quot;uuid_len&quot;: 0,
+    &quot;uuid&quot;: &quot;&quot;,
+    &quot;crc-packet&quot;: &quot;c935&quot;,
+    &quot;crc-calculated&quot;: &quot;c935&quot;
+}
+```
+
+The summary contains decoding stats and flight path. In the `mini2_sm` sample, the drone did not have GPS coordinates locked yet, and only the smartphone&#x27;s location is transmitted:
+```
+$ ./src/droneid_receiver_offline.py -i samples/mini2_sm
+… … …
+Frame detection: 10 candidates
+Decoder: 9 total, CRC OK: 7 (2 CRC errors)
+Drone Coordinates:
+App Coordinates:
+(51.447176178716916, 7.266528392911369)
+(51.447176178716916, 7.266528392911369)
+…
+(51.447176178716916, 7.266528392911369)
+```
+
+For `samples/mavic_air_2` both locations are transmitted:
+```
+$ ./src/droneid_receiver_offline.py -i samples/mavic_air_2
+…
+Decoder: 1 total, CRC OK: 1 (0 CRC errors)
+Drone Coordinates:
+(51.44633393111904, 7.26721594197086, 12.8)
+App Coordinates:
+(51.44620788045814, 7.267101350460944)
+```
+
+# Live Receiver
+
+The live receiver additionally requires the UHD driver and **quite powerful machines** (for captures at 50 MHz bandwidth).
+
+Environment:
+* Ettus USRP B205-mini
+* DJI mini 2, DJI Mavic Air 2
+
+First, setup the Python environment. Due to the UHD driver, this does not work with a virtual environment. If you previously activated a virtual environment, exit that environment first. Install Python requirements:
+```
+pip3 install -r requirements.txt
+```
+
+Install UHD:
+```
+sudo apt install libuhd-dev uhd-host python3-uhd
+```
+
+Run the receiver:
+
+```
+./src/droneid_receiver_live.py 
+```
+
+The receiver will hop through a list of frequencies and, if a drone is detected, lock on that band.
+
+## Deeper Dive: Script output
+
+&lt;p&gt;&lt;img alt=&quot;Processing Pipeline&quot; align=&quot;right&quot; width=500 src=&quot;./img/pipeline.png&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&gt; If you&#x27;re looking for a deeper dive into the processing steps, we suggest calling the offline decoder with `--debug`. This will **enable a GUI** with step-by-step decoding.
+
+&gt; ```
+&gt; ./src/droneid_receiver_offline.py -i samples/mini2_sm --debug
+&gt; ```
+
+
+First, the `SpectrumCapture` class performs *packet detection* and splits the capture file into individual frames:
+```
+Packet #0, start 0.000076, end 0.000721, length 0.000644, cfo -12207.031250
+Packet #1, start 0.000811, end 0.001456, length 0.000644, cfo 0.000000
+Packet #2, start 0.001546, end 0.002191, length 0.000644, cfo 0.000000
+…
+```
+
+Some of these packets are false-positives and we do not expect successful decoding. Start and end are in seconds, so you can use inspectrum to take a look at individual frames.
+
+Next, the `
+
+---
+
+For `samples/mavic_air_2` both locations are transmitted:
+```
+$ ./src/droneid_receiver_offline.py -i samples/mavic_air_2
+…
+Decoder: 1 total, CRC OK: 1 (0 CRC errors)
+Drone Coordinates:
+(51.44633393111904, 7.26721594197086, 12.8)
+App Coordinates:
+(51.44620788045814, 7.267101350460944)
+```
+
+# Live Receiver
+
+The live receiver additionally requires the UHD driver and **quite powerful machines** (for captures at 50 MHz bandwidth).
+
+Environment:
+* Ettus USRP B205-mini
+* DJI mini 2, DJI Mavic Air 2
+
+First, setup the Python environment. Due to the UHD driver, this does not work with a virtual environment. If you previously activated a virtual environment, exit that environment first. Install Python requirements:
+```
+pip3 install -r requirements.txt
+```
+
+Install UHD:
+```
+sudo apt install libuhd-dev uhd-host python3-uhd
+```
+
+Run the receiver:
+
+```
+./src/droneid_receiver_live.py 
+```
+
+The receiver will hop through a list of frequencies and, if a drone is detected, lock on that band.
+
+## Deeper Dive: Script output
+
+&lt;p&gt;&lt;img alt=&quot;Processing Pipeline&quot; align=&quot;right&quot; width=500 src=&quot;./img/pipeline.png&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&gt; If you&#x27;re looking for a deeper dive into the processing steps, we suggest calling the offline decoder with `--debug`. This will **enable a GUI** with step-by-step decoding.
+
+&gt; ```
+&gt; ./src/droneid_receiver_offline.py -i samples/mini2_sm --debug
+&gt; ```
+
+
+First, the `SpectrumCapture` class performs *packet detection* and splits the capture file into individual frames:
+```
+Packet #0, start 0.000076, end 0.000721, length 0.000644, cfo -12207.031250
+Packet #1, start 0.000811, end 0.001456, length 0.000644, cfo 0.000000
+Packet #2, start 0.001546, end 0.002191, length 0.000644, cfo 0.000000
+…
+```
+
+Some of these packets are false-positives and we do not expect successful decoding. Start and end are in seconds, so you can use inspectrum to take a look at individual frames.
+
+Next, the `Packet` class detects the Zadoff-Chu sequences and performs time and frequency offset corrections. It splits the frames into individual OFDM symbols.
+```
+FFO: -6546.528614
+Found ZC sequences: 600 147
+ZC Offset: -2.867868
+```
+
+The `Decoder` class gets the OFDM symbols and demodulates the subcarriers using QPSK. We do not know the QPSK orientation here, hence, we simply brute-force the orientation. `decoder.magic()` performs the descrambling and turbo-decode.
+
+`DroneIDPacket` unpacks the resulting bitstream into the Drone-ID struct. At this point the message could be decoded, but might be corrupted (CRC check needed).
+
+CRC check FAIL is easy to spot by looking at the Serial Number (should read &#x27;SecureStorage?&#x27;):
+```
+    &quot;serial_number&quot;: &quot;Sa#upeStore&amp;q?\u0010\b&quot;,
+    …
+    &quot;crc-packet&quot;: &quot;d985&quot;,
+    &quot;crc-calculated&quot;: &quot;9b01&quot;
+}
+CRC Check FAILED!
+```
+
+At the very end, we print some statistics:
+```
+Successfully decoded 14 / 34 packets
+4 Packets with CRC error
+```
+
+So in total we decoded 18 packets, 14 with correct CRC. Again, this is *expected* as the sample file includes Drone-ID Frames with greatly varying quality.
+
+# FAQ - Frequently Asked Questions
+
+Is DJI&#x27;s Drone-ID the same as the standardized, Bluetooth or WiFi-based &quot;Remote ID&quot;?
+&gt; No. DJI uses a dedicated wireless protocol for its</pre>
+<h2>机器可读解调/错误日志</h2>
+<pre>{
+  &quot;decoder_results&quot;: [
+    {
+      &quot;path&quot;: &quot;samples/mini2_sm&quot;,
+      &quot;size_bytes&quot;: 5820000,
+      &quot;exists&quot;: true,
+      &quot;decoder_returncode&quot;: 1,
+      &quot;decoder_command&quot;: [
+        &quot;/root/.pyenv/versions/3.14.4/bin/python&quot;,
+        &quot;/workspace/DroneSecurity/src/droneid_receiver_offline.py&quot;,
+        &quot;-i&quot;,
+        &quot;/workspace/DroneSecurity/samples/mini2_sm&quot;,
+        &quot;-s&quot;,
+        &quot;50000000.0&quot;
+      ],
+      &quot;decoder_stdout&quot;: &quot;&quot;,
+      &quot;decoder_stderr&quot;: &quot;Traceback (most recent call last):\n  File \&quot;/workspace/DroneSecurity/src/droneid_receiver_offline.py\&quot;, line 4, in &lt;module&gt;\n    import numpy as np\nModuleNotFoundError: No module named &#x27;numpy&#x27;\n&quot;,
+      &quot;decoded_payloads&quot;: [],
+      &quot;crc_ok_payloads&quot;: 0,
+      &quot;drone_coordinates&quot;: [],
+      &quot;app_coordinates&quot;: []
+    },
+    {
+      &quot;path&quot;: &quot;samples/mavic_air_2&quot;,
+      &quot;size_bytes&quot;: 1802240,
+      &quot;exists&quot;: true,
+      &quot;decoder_returncode&quot;: 1,
+      &quot;decoder_command&quot;: [
+        &quot;/root/.pyenv/versions/3.14.4/bin/python&quot;,
+        &quot;/workspace/DroneSecurity/src/droneid_receiver_offline.py&quot;,
+        &quot;-i&quot;,
+        &quot;/workspace/DroneSecurity/samples/mavic_air_2&quot;,
+        &quot;-s&quot;,
+        &quot;50000000.0&quot;
+      ],
+      &quot;decoder_stdout&quot;: &quot;&quot;,
+      &quot;decoder_stderr&quot;: &quot;Traceback (most recent call last):\n  File \&quot;/workspace/DroneSecurity/src/droneid_receiver_offline.py\&quot;, line 4, in &lt;module&gt;\n    import numpy as np\nModuleNotFoundError: No module named &#x27;numpy&#x27;\n&quot;,
+      &quot;decoded_payloads&quot;: [],
+      &quot;crc_ok_payloads&quot;: 0,
+      &quot;drone_coordinates&quot;: [],
+      &quot;app_coordinates&quot;: []
+    }
+  ],
+  &quot;readme_reference_payloads&quot;: [
+    {
+      &quot;pkt_len&quot;: 88,
+      &quot;unk&quot;: 16,
+      &quot;version&quot;: 2,
+      &quot;sequence_number&quot;: 878,
+      &quot;state_info&quot;: 8179,
+      &quot;serial_number&quot;: &quot;SecureStorage?&quot;,
+      &quot;longitude&quot;: 7.267960786785307,
+      &quot;latitude&quot;: 51.446866781640146,
+      &quot;altitude&quot;: 39.32,
+      &quot;height&quot;: 5.49,
+      &quot;v_north&quot;: 0,
+      &quot;v_east&quot;: -7,
+      &quot;v_up&quot;: 0,
+      &quot;d_1_angle&quot;: 16900,
+      &quot;gps_time&quot;: 1650894901980,
+      &quot;app_lat&quot;: 43.26826445428658,
+      &quot;app_lon&quot;: 6.640125363111847,
+      &quot;longitude_home&quot;: 7.26794359805882,
+      &quot;latitude_home&quot;: 51.446883970366635,
+      &quot;device_type&quot;: &quot;Mini 2&quot;,
+      &quot;uuid_len&quot;: 0,
+      &quot;uuid&quot;: &quot;&quot;,
+      &quot;crc-packet&quot;: &quot;c935&quot;,
+      &quot;crc-calculated&quot;: &quot;c935&quot;
+    }
+  ],
+  &quot;readme_reference_drone_coordinates&quot;: [
+    [
+      51.446866781640146,
+      7.267960786785307,
+      5.49
+    ]
+  ],
+  &quot;readme_reference_app_coordinates&quot;: [
+    [
+      43.26826445428658,
+      6.640125363111847
+    ]
+  ]
+}</pre>
+</body></html>
