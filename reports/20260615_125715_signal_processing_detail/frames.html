@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>逐帧信号处理中间过程</title>
+<style>
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6;margin:32px auto;max-width:1320px;padding:0 22px;color:#1f2328}
+h1,h2,h3{line-height:1.25}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:12px 0 24px}
+th,td{border:1px solid #d0d7de;padding:6px 8px;vertical-align:top}
+th{background:#f6f8fa;text-align:left}
+img{max-width:100%;height:auto;border:1px solid #d0d7de;border-radius:4px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:16px}
+.card{border:1px solid #d0d7de;border-radius:6px;padding:12px;margin:12px 0;background:#fff}
+.note{background:#f6f8fa;border-left:4px solid #0969da;padding:10px 12px}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
+pre{white-space:pre-wrap;background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:12px;overflow:auto}
+</style>
+</head>
+<body>
+
+<h1>逐帧信号处理中间过程</h1>
+<p><a href="index.html">返回主报告</a></p>
+
+<section class="card">
+<h2>mini2_sm packet 0 - CRC OK</h2>
+<p><strong>RID:</strong> seq=786，
+serial=SysSecWasHere ，
+device=Mini 2，
+app=(51.447176178716916, 7.266528392911369)</p>
+<h3>Retry / failure evidence</h3>
+<pre>无 retry</pre>
+<div class="grid"><div class='card'><img src='assets/mini2_sm_pkt0_candidate_spectrogram.png'></div><div class='card'><img src='assets/mini2_sm_pkt0_raw_iq_scatter.png'></div><div class='card'><img src='assets/mini2_sm_pkt0_psd_cfo_before_after.png'></div><div class='card'><img src='assets/mini2_sm_pkt0_resampled_spectrogram.png'></div><div class='card'><img src='assets/mini2_sm_pkt0_cp_correlation.png'></div><div class='card'><img src='assets/mini2_sm_pkt0_zc_phase_slope.png'></div><div class='card'><img src='assets/mini2_sm_pkt0_constellation_default_retry.png'></div></div>
+</section>
+
+<section class="card">
+<h2>mini2_sm packet 6 - retry recovered CRC OK</h2>
+<p><strong>RID:</strong> seq=804，
+serial=SysSecWasHere ，
+device=Mini 2，
+app=(51.447176178716916, 7.266528392911369)</p>
+<h3>Retry / failure evidence</h3>
+<pre>{
+  &quot;tune_hz&quot;: -250,
+  &quot;sample_offset_delta&quot;: -2,
+  &quot;linear_rotation&quot;: 0.002,
+  &quot;parsed_payloads&quot;: [
+    {
+      &quot;phase&quot;: 0,
+      &quot;crc_ok&quot;: true,
+      &quot;payload&quot;: {
+        &quot;pkt_len&quot;: 88,
+        &quot;unk&quot;: 16,
+        &quot;version&quot;: 2,
+        &quot;sequence_number&quot;: 804,
+        &quot;state_info&quot;: 7955,
+        &quot;serial_number&quot;: &quot;SysSecWasHere &quot;,
+        &quot;longitude&quot;: 0.0,
+        &quot;latitude&quot;: 0.0,
+        &quot;altitude&quot;: 0.0,
+        &quot;height&quot;: 0.0,
+        &quot;v_north&quot;: 0,
+        &quot;v_east&quot;: 0,
+        &quot;v_up&quot;: 0,
+        &quot;d_1_angle&quot;: 9581,
+        &quot;gps_time&quot;: 1648558241642,
+        &quot;app_lat&quot;: 51.447176178716916,
+        &quot;app_lon&quot;: 7.266528392911369,
+        &quot;longitude_home&quot;: 0.0,
+        &quot;latitude_home&quot;: 0.0,
+        &quot;device_type&quot;: &quot;Mini 2&quot;,
+        &quot;uuid_len&quot;: 0,
+        &quot;uuid&quot;: &quot;&quot;,
+        &quot;crc-packet&quot;: &quot;d984&quot;,
+        &quot;crc-calculated&quot;: &quot;d984&quot;
+      }
+    }
+  ]
+}</pre>
+<div class="grid"><div class='card'><img src='assets/mini2_sm_pkt6_candidate_spectrogram.png'></div><div class='card'><img src='assets/mini2_sm_pkt6_raw_iq_scatter.png'></div><div class='card'><img src='assets/mini2_sm_pkt6_psd_cfo_before_after.png'></div><div class='card'><img src='assets/mini2_sm_pkt6_resampled_spectrogram.png'></div><div class='card'><img src='assets/mini2_sm_pkt6_cp_correlation.png'></div><div class='card'><img src='assets/mini2_sm_pkt6_zc_phase_slope.png'></div><div class='card'><img src='assets/mini2_sm_pkt6_constellation_default_retry.png'></div></div>
+</section>
+
+<section class="card">
+<h2>mini2_sm packet 7 - retry recovered CRC OK</h2>
+<p><strong>RID:</strong> seq=804，
+serial=SysSecWasHere ，
+device=Mini 2，
+app=(51.447176178716916, 7.266528392911369)</p>
+<h3>Retry / failure evidence</h3>
+<pre>{
+  &quot;tune_hz&quot;: -250,
+  &quot;sample_offset_delta&quot;: -2,
+  &quot;linear_rotation&quot;: 0.002,
+  &quot;parsed_payloads&quot;: [
+    {
+      &quot;phase&quot;: 2,
+      &quot;crc_ok&quot;: true,
+      &quot;payload&quot;: {
+        &quot;pkt_len&quot;: 88,
+        &quot;unk&quot;: 16,
+        &quot;version&quot;: 2,
+        &quot;sequence_number&quot;: 804,
+        &quot;state_info&quot;: 7955,
+        &quot;serial_number&quot;: &quot;SysSecWasHere &quot;,
+        &quot;longitude&quot;: 0.0,
+        &quot;latitude&quot;: 0.0,
+        &quot;altitude&quot;: 0.0,
+        &quot;height&quot;: 0.0,
+        &quot;v_north&quot;: 0,
+        &quot;v_east&quot;: 0,
+        &quot;v_up&quot;: 0,
+        &quot;d_1_angle&quot;: 9581,
+        &quot;gps_time&quot;: 1648558241642,
+        &quot;app_lat&quot;: 51.447176178716916,
+        &quot;app_lon&quot;: 7.266528392911369,
+        &quot;longitude_home&quot;: 0.0,
+        &quot;latitude_home&quot;: 0.0,
+        &quot;device_type&quot;: &quot;Mini 2&quot;,
+        &quot;uuid_len&quot;: 0,
+        &quot;uuid&quot;: &quot;&quot;,
+        &quot;crc-packet&quot;: &quot;d984&quot;,
+        &quot;crc-calculated&quot;: &quot;d984&quot;
+      }
+    }
+  ]
+}</pre>
+<div class="grid"><div class='card'><img src='assets/mini2_sm_pkt7_candidate_spectrogram.png'></div><div class='card'><img src='assets/mini2_sm_pkt7_raw_iq_scatter.png'></div><div class='card'><img src='assets/mini2_sm_pkt7_psd_cfo_before_after.png'></div><div class='card'><img src='assets/mini2_sm_pkt7_resampled_spectrogram.png'></div><div class='card'><img src='assets/mini2_sm_pkt7_cp_correlation.png'></div><div class='card'><img src='assets/mini2_sm_pkt7_zc_phase_slope.png'></div><div class='card'><img src='assets/mini2_sm_pkt7_constellation_default_retry.png'></div></div>
+</section>
+
+<section class="card">
+<h2>mini2_sm packet 9 - retry recovered CRC OK</h2>
+<p><strong>RID:</strong> seq=806，
+serial=SysSecWasHere ，
+device=Mini 2，
+app=(51.447176178716916, 7.266528392911369)</p>
+<h3>Retry / failure evidence</h3>
+<pre>{
+  &quot;tune_hz&quot;: -250,
+  &quot;sample_offset_delta&quot;: -2,
+  &quot;linear_rotation&quot;: 0.002,
+  &quot;parsed_payloads&quot;: [
+    {
+      &quot;phase&quot;: 1,
+      &quot;crc_ok&quot;: true,
+      &quot;payload&quot;: {
+        &quot;pkt_len&quot;: 88,
+        &quot;unk&quot;: 16,
+        &quot;version&quot;: 2,
+        &quot;sequence_number&quot;: 806,
+        &quot;state_info&quot;: 7955,
+        &quot;serial_number&quot;: &quot;SysSecWasHere &quot;,
+        &quot;longitude&quot;: 0.0,
+        &quot;latitude&quot;: 0.0,
+        &quot;altitude&quot;: 0.0,
+        &quot;height&quot;: 0.0,
+        &quot;v_north&quot;: 0,
+        &quot;v_east&quot;: 0,
+        &quot;v_up&quot;: 0,
+        &quot;d_1_angle&quot;: 9580,
+        &quot;gps_time&quot;: 1648558241642,
+        &quot;app_lat&quot;: 51.447176178716916,
+        &quot;app_lon&quot;: 7.266528392911369,
+        &quot;longitude_home&quot;: 0.0,
+        &quot;latitude_home&quot;: 0.0,
+        &quot;device_type&quot;: &quot;Mini 2&quot;,
+        &quot;uuid_len&quot;: 0,
+        &quot;uuid&quot;: &quot;&quot;,
+        &quot;crc-packet&quot;: &quot;bb49&quot;,
+        &quot;crc-calculated&quot;: &quot;bb49&quot;
+      }
+    }
+  ]
+}</pre>
+<div class="grid"><div class='card'><img src='assets/mini2_sm_pkt9_candidate_spectrogram.png'></div><div class='card'><img src='assets/mini2_sm_pkt9_raw_iq_scatter.png'></div><div class='card'><img src='assets/mini2_sm_pkt9_psd_cfo_before_after.png'></div><div class='card'><img src='assets/mini2_sm_pkt9_resampled_spectrogram.png'></div><div class='card'><img src='assets/mini2_sm_pkt9_cp_correlation.png'></div><div class='card'><img src='assets/mini2_sm_pkt9_zc_phase_slope.png'></div><div class='card'><img src='assets/mini2_sm_pkt9_constellation_default_retry.png'></div></div>
+</section>
+
+<section class="card">
+<h2>mavic_air_2 packet 2 - CRC OK</h2>
+<p><strong>RID:</strong> seq=591，
+serial=1WNBH3900201N1，
+device=Mavic Air 2，
+app=(51.44620788045814, 7.267101350460944)</p>
+<h3>Retry / failure evidence</h3>
+<pre>无 retry</pre>
+<div class="grid"><div class='card'><img src='assets/mavic_air_2_pkt2_candidate_spectrogram.png'></div><div class='card'><img src='assets/mavic_air_2_pkt2_raw_iq_scatter.png'></div><div class='card'><img src='assets/mavic_air_2_pkt2_psd_cfo_before_after.png'></div><div class='card'><img src='assets/mavic_air_2_pkt2_resampled_spectrogram.png'></div><div class='card'><img src='assets/mavic_air_2_pkt2_cp_correlation.png'></div><div class='card'><img src='assets/mavic_air_2_pkt2_zc_phase_slope.png'></div><div class='card'><img src='assets/mavic_air_2_pkt2_constellation_default_retry.png'></div></div>
+</section>
+
+<section class="card">
+<h2>mavic_air_2 packet 0 - 未恢复</h2>
+<p><strong>RID:</strong> seq=，
+serial=，
+device=，
+app=(, )</p>
+<h3>Retry / failure evidence</h3>
+<pre>null</pre>
+<div class="grid"><div class='card'><img src='assets/mavic_air_2_pkt0_candidate_spectrogram.png'></div><div class='card'><img src='assets/mavic_air_2_pkt0_raw_iq_scatter.png'></div><div class='card'><img src='assets/mavic_air_2_pkt0_psd_cfo_before_after.png'></div><div class='card'><img src='assets/mavic_air_2_pkt0_resampled_spectrogram.png'></div><div class='card'><img src='assets/mavic_air_2_pkt0_cp_correlation.png'></div><div class='card'><img src='assets/mavic_air_2_pkt0_zc_phase_slope.png'></div><div class='card'><img src='assets/mavic_air_2_pkt0_constellation_default_retry.png'></div></div>
+</section>
+
+<section class="card">
+<h2>mavic_air_2 packet 1 - 未恢复</h2>
+<p><strong>RID:</strong> seq=，
+serial=，
+device=，
+app=(, )</p>
+<h3>Retry / failure evidence</h3>
+<pre>null</pre>
+<div class="grid"><div class='card'><img src='assets/mavic_air_2_pkt1_candidate_spectrogram.png'></div><div class='card'><img src='assets/mavic_air_2_pkt1_raw_iq_scatter.png'></div><div class='card'><img src='assets/mavic_air_2_pkt1_psd_cfo_before_after.png'></div><div class='card'><img src='assets/mavic_air_2_pkt1_resampled_spectrogram.png'></div><div class='card'><img src='assets/mavic_air_2_pkt1_cp_correlation.png'></div><div class='card'><img src='assets/mavic_air_2_pkt1_zc_phase_slope.png'></div><div class='card'><img src='assets/mavic_air_2_pkt1_constellation_default_retry.png'></div></div>
+</section>
+
+
+</body>
+</html>

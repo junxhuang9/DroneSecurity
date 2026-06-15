@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 from helpers import estimate_offset
 
 def find_packet_candidate_time(raw_data, Fs, debug=False, packet_type = "droneid", legacy = False):
-    """Find packets with the right length by looking at signal power"""
-    # for Mavic 2: around 576e-6 => symbol 0 missing
-    # 8 * 72e-7
+    """根据突发能量持续时间寻找长度符合要求的候选帧。"""
+    # Mavic 2 等旧机型的帧约为 576 us，缺少符号 0。
+    # 新机型 Drone-ID 帧更长，约为 630 到 665 us。
 
     if packet_type == "droneid": 
         if legacy:
@@ -42,12 +42,12 @@ def find_packet_candidate_time(raw_data, Fs, debug=False, packet_type = "droneid
     noise_floor = np.mean(np.abs(Zxx))
 
 
-    # get things above the noise floor
+    # 对短时频谱每个时间片取最大幅度，超过平均噪声底一定比例就认为有信号。
     above_level = res_abs > 1.15*noise_floor
 
-    # search for chunks above noise floor that fit the packet length
-    signal_length_min_samples = int(min_packet_len_t/(t[1]-t[0])) # packet duration to samples
-    signal_length_max_samples = int(max_packet_len_t/(t[1]-t[0])) # packet duration to samples
+    # 在“高于噪声底”的布尔序列中寻找宽度符合帧时长的连续区域。
+    signal_length_min_samples = int(min_packet_len_t/(t[1]-t[0])) # 帧时长换算成 STFT 时间片数量
+    signal_length_max_samples = int(max_packet_len_t/(t[1]-t[0])) # 帧时长换算成 STFT 时间片数量
     peaks, properties = signal.find_peaks(above_level, width=[signal_length_min_samples, signal_length_max_samples],wlen=100*signal_length_max_samples)
 
         
@@ -58,13 +58,13 @@ def find_packet_candidate_time(raw_data, Fs, debug=False, packet_type = "droneid
     length = 0
 
     for i, _ in enumerate(peaks):
-        start = properties["left_bases"][i] * (t[1]-t[0]) # samples to time
+        start = properties["left_bases"][i] * (t[1]-t[0]) # STFT 时间片换算成秒
         end = properties["right_bases"][i] * (t[1]-t[0])
         length =  properties["widths"][i] * (t[1]-t[0])
 
         packet_data = raw_data[int((start-start_offset)*Fs):int((end+end_offset)*Fs)]
 
-        # estimate center frequency offset (only successful if packet is 10 MHz)
+        # 估计中心频偏；只有候选帧带宽符合预期时才会认为估计成功。
         center_freq_offset, found = estimate_offset(packet_data, Fs)
 
         if not found:

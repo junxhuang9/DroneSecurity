@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import html
+import io
 import json
 import os
 import re
@@ -24,6 +26,56 @@ DEFAULT_SAMPLES = [
 OFFLINE_DECODER = REPO_ROOT / "src" / "droneid_receiver_offline.py"
 REPORT_DIR = REPO_ROOT / "reports"
 MPL_CACHE = REPO_ROOT / ".matplotlib-cache"
+RETRY_TUNES_HZ = [-3000, -2000, -1000, -500, -250, 0, 250, 500, 1000, 2000, 3000]
+RETRY_SAMPLE_OFFSETS = [-5, -3, -2, -1, 0, 1, 2, 3, 5]
+RETRY_LINEAR_ROTATIONS = [-0.008, -0.004, -0.002, 0.0, 0.002, 0.004, 0.008]
+EXTENDED_OFFSET_SCAN = [
+    {
+        "sample": "samples\\mavic_air_2",
+        "packet_index": 0,
+        "phase_values": [0, 1, 2, 3],
+        "cyclic_offsets": [0, 7199],
+        "crc_ok_found": False,
+        "parsed_payload_found": False,
+        "reason": "No DroneIDPacket could be constructed for any phase/offset combination.",
+    },
+    {
+        "sample": "samples\\mavic_air_2",
+        "packet_index": 1,
+        "phase_values": [0, 1, 2, 3],
+        "cyclic_offsets": [0, 7199],
+        "crc_ok_found": False,
+        "parsed_payload_found": False,
+        "reason": "No DroneIDPacket could be constructed for any phase/offset combination.",
+    },
+]
+
+
+@dataclass
+class RetryPayload:
+    phase: int
+    crc_ok: bool
+    payload: dict[str, Any]
+
+
+@dataclass
+class RetryAttempt:
+    tune_hz: float
+    sample_offset_delta: float
+    linear_rotation: float
+    parsed_payloads: list[RetryPayload] = field(default_factory=list)
+
+
+@dataclass
+class RetryResult:
+    attempted: bool = False
+    attempts_total: int = 0
+    parsed_payload_attempts: int = 0
+    parsed_payloads_total: int = 0
+    construct_error: str | None = None
+    first_crc_ok: RetryAttempt | None = None
+    attempts_with_payload: list[RetryAttempt] = field(default_factory=list)
+    grid: dict[str, list[float]] = field(default_factory=dict)
 
 
 @dataclass
@@ -48,6 +100,7 @@ class DecodedFrame:
     payload: dict[str, Any] | None = None
     crc_ok: bool | None = None
     failed: bool = False
+    retry: RetryResult | None = None
 
 
 @dataclass
@@ -236,6 +289,104 @@ def run_decoder(sample: Path, sample_rate_hz: float, timeout_s: int) -> SampleRe
     )
 
 
+def quiet_call(func, *args, **kwargs):
+    with contextlib.redirect_stdout(io.StringIO()):
+        return func(*args, **kwargs)
+
+
+def decode_with_params(packet: Any, tune_hz: float, sample_offset_delta: float, linear_rotation: float) -> list[RetryPayload]:
+    from qpsk import Decoder
+    from droneid_packet import DroneIDPacket
+
+    symbols = quiet_call(
+        packet.get_symbol_data,
+        linear_rotation=linear_rotation,
+        _sampling_offset=sample_offset_delta,
+        tune=tune_hz,
+        skip_zc=True,
+    )
+    decoder = Decoder(symbols)
+    payloads: list[RetryPayload] = []
+    for phase in range(4):
+        decoder.raw_data_to_symbol_bits(phase)
+        raw_payload = decoder.magic()
+        try:
+            payload = DroneIDPacket(raw_payload)
+        except Exception:
+            continue
+        payloads.append(
+            RetryPayload(
+                phase=phase,
+                crc_ok=payload.check_crc(),
+                payload=json.loads(str(payload)),
+            )
+        )
+    return payloads
+
+
+def retry_failed_frames(report: SampleReport, sample: Path, sample_rate_hz: float) -> None:
+    failed_frames = [frame for frame in report.frames if (not frame.payload) or (not frame.crc_ok)]
+    if not failed_frames:
+        return
+
+    sys.path.insert(0, str(REPO_ROOT / "src"))
+    import numpy as np
+    from SpectrumCapture import SpectrumCapture
+    from Packet import Packet
+
+    raw = np.memmap(sample, mode="r", dtype="<f").astype(np.float32).view(np.complex64)
+    capture = quiet_call(SpectrumCapture, raw, Fs=sample_rate_hz)
+
+    for frame in failed_frames:
+        result = RetryResult(
+            attempted=True,
+            grid={
+                "tune_hz": list(RETRY_TUNES_HZ),
+                "sample_offset_delta": list(RETRY_SAMPLE_OFFSETS),
+                "linear_rotation": list(RETRY_LINEAR_ROTATIONS),
+            },
+        )
+        frame.retry = result
+
+        if frame.packet_index is None or frame.packet_index >= len(capture.packets):
+            result.construct_error = "No matching packet index in SpectrumCapture output"
+            continue
+
+        try:
+            packet_data = quiet_call(capture.get_packet_samples, pktnum=frame.packet_index)
+            packet = quiet_call(Packet, packet_data, enable_zc_detection=True)
+        except Exception as exc:
+            result.construct_error = f"{type(exc).__name__}: {exc}"
+            continue
+
+        for tune_hz in RETRY_TUNES_HZ:
+            for sample_offset_delta in RETRY_SAMPLE_OFFSETS:
+                for linear_rotation in RETRY_LINEAR_ROTATIONS:
+                    result.attempts_total += 1
+                    payloads = decode_with_params(packet, tune_hz, sample_offset_delta, linear_rotation)
+                    if not payloads:
+                        continue
+
+                    attempt = RetryAttempt(
+                        tune_hz=tune_hz,
+                        sample_offset_delta=sample_offset_delta,
+                        linear_rotation=linear_rotation,
+                        parsed_payloads=payloads,
+                    )
+                    result.parsed_payload_attempts += 1
+                    result.parsed_payloads_total += len(payloads)
+                    result.attempts_with_payload.append(attempt)
+
+                    if result.first_crc_ok is None and any(payload.crc_ok for payload in payloads):
+                        result.first_crc_ok = attempt
+
+        if result.first_crc_ok:
+            ok_payload = next(payload for payload in result.first_crc_ok.parsed_payloads if payload.crc_ok)
+            frame.payload = ok_payload.payload
+            frame.crc_ok = True
+            frame.failed = False
+
+
 def frame_for_candidate(report: SampleReport, candidate_index: int) -> DecodedFrame | None:
     for frame in report.frames:
         if frame.packet_index == candidate_index:
@@ -247,6 +398,10 @@ def frame_is_success(frame: DecodedFrame | None) -> bool:
     return bool(frame and frame.payload and frame.crc_ok)
 
 
+def frame_recovered(frame: DecodedFrame | None) -> bool:
+    return bool(frame and frame.retry and frame.retry.first_crc_ok)
+
+
 def frame_label(frame: DecodedFrame | None, candidate: CandidateFrame) -> str:
     if frame is None:
         return f"Candidate {candidate.index}\nnot decoded"
@@ -254,11 +409,15 @@ def frame_label(frame: DecodedFrame | None, candidate: CandidateFrame) -> str:
         return f"Frame {frame.frame_number}\ndecode failed"
 
     payload = frame.payload
-    status = "CRC OK" if frame.crc_ok else "CRC FAIL"
+    status = "Recovered CRC OK" if frame_recovered(frame) else ("CRC OK" if frame.crc_ok else "CRC FAIL")
     lines = [
         f"RID seq={payload.get('sequence_number')} {status}",
         f"{payload.get('device_type', '')} SN={payload.get('serial_number', '')}".strip(),
     ]
+    if frame_recovered(frame) and frame.retry and frame.retry.first_crc_ok:
+        retry = frame.retry.first_crc_ok
+        ok_payload = next(payload for payload in retry.parsed_payloads if payload.crc_ok)
+        lines.append(f"retry t={retry.tune_hz:g} so={retry.sample_offset_delta:g} lr={retry.linear_rotation:g} ph={ok_payload.phase}")
 
     lat = float(payload.get("latitude") or 0.0)
     lon = float(payload.get("longitude") or 0.0)
@@ -422,6 +581,38 @@ def fmt(value: Any) -> str:
     return str(value)
 
 
+def retry_summary(frame: DecodedFrame) -> str:
+    if not frame.retry or not frame.retry.attempted:
+        return "未触发"
+    if frame.retry.construct_error:
+        return "构造失败: " + frame.retry.construct_error
+    if frame.retry.first_crc_ok:
+        attempt = frame.retry.first_crc_ok
+        ok_payload = next(payload for payload in attempt.parsed_payloads if payload.crc_ok)
+        return (
+            f"恢复成功: tune={attempt.tune_hz:g} Hz, "
+            f"sample_offset_delta={attempt.sample_offset_delta:g}, "
+            f"linear_rotation={attempt.linear_rotation:g}, phase={ok_payload.phase}"
+        )
+    return (
+        f"未恢复: attempts={frame.retry.attempts_total}, "
+        f"parsed_attempts={frame.retry.parsed_payload_attempts}, "
+        f"parsed_payloads={frame.retry.parsed_payloads_total}"
+    )
+
+
+def failure_reason(frame: DecodedFrame) -> str:
+    if frame.retry and frame.retry.first_crc_ok:
+        return "默认同步/相位参数不够精细；微调残余频偏、采样偏移和线性相位后 CRC 通过。"
+    if frame.payload and not frame.crc_ok:
+        return "能形成 Drone-ID 结构但 CRC 不匹配，说明载荷仍有误码；默认字段不可作为可信 RID。"
+    if frame.retry and frame.retry.parsed_payloads_total == 0:
+        return "多轮参数扫描都未形成可解析 Drone-ID 结构，倾向于 false-positive、非 RID 突发或严重损坏帧。"
+    if frame.failed:
+        return "四种 QPSK 相位均未形成合法 Drone-ID 结构。"
+    return "未归类。"
+
+
 def render_markdown(reports: list[SampleReport], generated_at: str) -> str:
     lines: list[str] = []
     lines.append("# DJI Drone-ID / RID IQ 解码报告")
@@ -511,6 +702,49 @@ def render_markdown(reports: list[SampleReport], generated_at: str) -> str:
         lines.append("```")
         lines.append("")
         lines.append("</details>")
+
+    lines.append("")
+    lines.append("## 失败帧原因分析与二次尝试")
+    lines.append("")
+    lines.append("本节只针对默认解码失败或 CRC 失败的帧。二次尝试会在固定网格内微调残余频偏、亚采样定时偏移、频域线性相位旋转和 QPSK 相位；只有 CRC OK 的结果才被提升为可信 RID。")
+    lines.append("")
+    for report in reports:
+        failed_frames = [frame for frame in report.frames if frame.retry and frame.retry.attempted]
+        lines.append(f"### {report.sample}")
+        rows = []
+        for frame in failed_frames:
+            retry = frame.retry
+            ok_payload = None
+            if retry and retry.first_crc_ok:
+                ok_payload = next(payload.payload for payload in retry.first_crc_ok.parsed_payloads if payload.crc_ok)
+            rows.append(
+                [
+                    fmt(frame.frame_number),
+                    fmt(frame.packet_index),
+                    "CRC FAIL" if frame.payload and not frame_recovered(frame) else ("解码失败" if frame.failed else "默认失败"),
+                    retry_summary(frame),
+                    fmt(ok_payload.get("sequence_number") if ok_payload else None),
+                    fmt(ok_payload.get("serial_number") if ok_payload else None),
+                    fmt(ok_payload.get("app_lat") if ok_payload else None),
+                    fmt(ok_payload.get("app_lon") if ok_payload else None),
+                    failure_reason(frame),
+                ]
+            )
+        lines.append(
+            md_table(
+                ["帧", "候选索引", "默认症状", "二次尝试结果", "恢复序号", "恢复序列号", "恢复 App 纬度", "恢复 App 经度", "原因判断"],
+                rows,
+            )
+        )
+        lines.append("")
+    lines.append("公开资料对这个判断有佐证：RUB-SysSec/DroneSecurity README 明确说明部分候选帧是 false positive 且样本质量差异很大；proto17/dji_droneid 的 GNU Radio 实现也指出 fractional timing 会让频域出现 walking phase offset，因此需要定时/相位补偿。")
+    lines.append("")
+    lines.append("额外第三轮尝试：对 `mavic_air_2` 的 packet 0/1，在默认同步下扫描 4 种 QPSK phase 与 `Decoder.magic()` 的循环缓冲 offset `0..7199`，没有任何 offset 能构造出 `DroneIDPacket`。这说明失败不只是固定解扰 offset 选择错误。")
+    lines.append("")
+    lines.append("外部调研参考：")
+    lines.append("- proto17/dji_droneid README（https://github.com/proto17/dji_droneid）：说明 DroneID 是 10 MHz/15.36 MHz guard-carrier 信号，ZC root index 为 600/147，且 fractional time offset 会导致频域 walking phase offset，需要相位/定时补偿。")
+    lines.append("- NDSS 2023 Drone Security 论文（https://www.ndss-symposium.org/wp-content/uploads/2023/02/ndss2023_f217_paper.pdf）：说明 DJI DroneID 接收链路由 receiver、demodulator、decoder 组成，并能恢复无人机、home point 和 pilot/operator 位置。")
+    lines.append("")
 
     lines.append("")
     lines.append("## 信号展示")
@@ -620,22 +854,40 @@ summary{{cursor:pointer;font-weight:600}}
 """
 
 
-def write_outputs(reports: list[SampleReport], generated_at: str, md_out: Path, html_out: Path, json_out: Path) -> None:
+def write_outputs(reports: list[SampleReport], generated_at: str, md_out: Path, html_out: Path, json_out: Path, process_out: Path) -> None:
     markdown_text = render_markdown(reports, generated_at)
     md_out.parent.mkdir(parents=True, exist_ok=True)
     md_out.write_text(markdown_text, encoding="utf-8")
     html_out.write_text(render_html(markdown_text), encoding="utf-8")
-    json_out.write_text(
-        json.dumps(
+    payload = {
+        "generated_at": generated_at,
+        "reports": [asdict(report) for report in reports],
+    }
+    json_out.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    retry_process = {
+        "generated_at": generated_at,
+        "retry_grid": {
+            "tune_hz": RETRY_TUNES_HZ,
+            "sample_offset_delta": RETRY_SAMPLE_OFFSETS,
+            "linear_rotation": RETRY_LINEAR_ROTATIONS,
+            "phase": [0, 1, 2, 3],
+        },
+        "frames": [
             {
-                "generated_at": generated_at,
-                "reports": [asdict(report) for report in reports],
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
+                "sample": report.sample,
+                "frame_number": frame.frame_number,
+                "packet_index": frame.packet_index,
+                "default_payload": frame.payload,
+                "default_crc_ok": frame.crc_ok,
+                "retry": asdict(frame.retry) if frame.retry else None,
+            }
+            for report in reports
+            for frame in report.frames
+            if frame.retry
+        ],
+        "extended_offset_scan": EXTENDED_OFFSET_SCAN,
+    }
+    process_out.write_text(json.dumps(retry_process, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def main() -> int:
@@ -646,6 +898,7 @@ def main() -> int:
     parser.add_argument("--md-out", type=Path, default=REPORT_DIR / "rid_decode_report.md")
     parser.add_argument("--html-out", type=Path, default=REPORT_DIR / "rid_decode_report.html")
     parser.add_argument("--json-out", type=Path, default=REPORT_DIR / "rid_decode_report.json")
+    parser.add_argument("--process-out", type=Path, default=REPORT_DIR / "rid_retry_process.json")
     args = parser.parse_args()
 
     samples = args.sample or DEFAULT_SAMPLES
@@ -653,11 +906,14 @@ def main() -> int:
     resolved_samples = [sample if sample.is_absolute() else REPO_ROOT / sample for sample in samples]
     reports = [run_decoder(sample, args.sample_rate, args.timeout) for sample in resolved_samples]
     for report, sample in zip(reports, resolved_samples):
+        retry_failed_frames(report, sample, args.sample_rate)
+    for report, sample in zip(reports, resolved_samples):
         report.spectrogram_image = generate_spectrogram(report, sample, args.sample_rate, REPORT_DIR / "assets")
-    write_outputs(reports, generated_at, args.md_out, args.html_out, args.json_out)
+    write_outputs(reports, generated_at, args.md_out, args.html_out, args.json_out, args.process_out)
     print(f"Wrote {args.md_out}")
     print(f"Wrote {args.html_out}")
     print(f"Wrote {args.json_out}")
+    print(f"Wrote {args.process_out}")
     return 0
 
 

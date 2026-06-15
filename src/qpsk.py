@@ -7,20 +7,22 @@ import numpy as np
 from goldgen import gold
 from droneid_packet import DroneIDPacket
 
-# QPSK quadrant-to-symbol mapping for multiple rotations
+# QPSK 象限到 2 bit 符号的映射表。
+# 由于接收端无法直接知道绝对星座方向，这里准备了 0/90/180/270 度四种旋转。
 qpsk_to_bits = [[2, 3, 1, 0],
-                [0, 2, 3, 1], # +90 degree
-                [1, 0, 2, 3], # +180 degree
-                [3, 1, 0, 2]]  # +270 degree
+                [0, 2, 3, 1], # +90 度
+                [1, 0, 2, 3], # +180 度
+                [3, 1, 0, 2]]  # +270 度
 
-# symbols within the Drone ID frame
-sym = [0, 1, 2, 4, 6, 7, 8] # symbols 3, 5 intentionally left out
-                            # they contain the ZC sequence and no information
+# Drone-ID 帧中承载数据的 OFDM 符号编号。
+sym = [0, 1, 2, 4, 6, 7, 8] # 符号 3 和 5 故意跳过，
+                            # 因为它们承载 ZC 同步序列，不承载载荷信息。
 
-# straight from 3GPP
+# 3GPP turbo rate matching 使用的列交织排列。
 RM_PERM_TURBO = [0, 16, 8, 24, 4, 20, 12, 28, 2, 18, 10, 26, 6, 22, 14, 30, 1, 17, 9, 25, 5, 21, 13, 29, 3, 19, 11, 27, 7, 23, 15, 31]
 
 def rm_turbo_rx(bits_in):
+    """撤销发送端的 turbo rate matching 交织，恢复系统比特流。"""
     ncols = 32
     nrows = (len(bits_in) + 31) // ncols
     n_dummy = (ncols * nrows) - len(bits_in)
@@ -42,8 +44,8 @@ def rm_turbo_rx(bits_in):
     assert (bits_out[:n_dummy] == -1).all()
     return bits_out[n_dummy:]
 
-# Poor man's QPSK mapping quadrants to symbols
 def get_symbol_bits(symbol: np.complex, phase_correction: int=0) -> int:
+    """按象限对单个 QPSK 星座点做硬判决，输出 0..3 的 2 bit 符号值。"""
     if phase_correction < 0 or phase_correction >= len(qpsk_to_bits):
         raise ValueError("Invalid phase correction")
 
@@ -58,7 +60,7 @@ def get_symbol_bits(symbol: np.complex, phase_correction: int=0) -> int:
 
 class Decoder:
     def __init__(self, raw_data=None):
-        # list of lists; 7 drone id frame symbols, and 601 qpsk symbols for each frame symbol
+        # raw_data 是二维列表：7 个数据 OFDM 符号，每个符号包含 601 个 QPSK 子载波。
 
         self.raw_data = []
         self.sym_bits = []
@@ -67,6 +69,7 @@ class Decoder:
             self.raw_data = raw_data
 
     def raw_data_to_symbol_bits(self, phase_correction):
+        """把频域 QPSK 子载波硬判决为每个子载波的 2 bit 符号值。"""
         demod = []
 
         for frame_symbol in self.raw_data:
@@ -78,6 +81,7 @@ class Decoder:
         self.sym_bits = demod
 
     def read_file(self, path=None):
+        """从 pkt_sym_*.txt 调试文件读取已经导出的 QPSK 星座点。"""
         raw_data = []
 
         for i, s in enumerate(sym):
@@ -93,10 +97,13 @@ class Decoder:
         self.raw_data = raw_data
 
     def magic(self):
+        """完成 Drone-ID 载荷恢复：去 DC、解扰、抽取系统位并打包成字节。"""
         sym_bits = self.sym_bits
         bits = np.array(sym_bits)
+        # 删除中心 DC 子载波，只保留 600 个真正承载 QPSK 数据的子载波。
         bits = np.delete(bits, 300,1)
 
+        # 每个 0..3 符号拆成两个布尔 bit。
         bits = np.repeat(bits, 2, axis=1)
         bits &= np.tile([1,2], 600)
         bits = bits > 0
@@ -105,40 +112,39 @@ class Decoder:
         if len(np.concatenate((bits[0:]))) > 7200:
 
             goldseq = gold(1600, 1200, 0x12345678)
-            #print("Gold Seq len: ", len(goldseq))
-            #print("Gold for Symbol: 0")
+            # print("Gold 序列长度: ", len(goldseq))
+            # print("符号 0 的 Gold 序列")
             gold_err = 0
             for i,j in enumerate(bits[0]):
                 if j != goldseq[i]:
                     gold_err += 1
 
             if not np.all(goldseq == bits[0]):
-                #print("Unable to satisfy Gold for Symbol 0")
-                #print("Gold Error:", gold_err,"\n")
+                # print("符号 0 与 Gold 序列不匹配")
+                # print("Gold 错误数:", gold_err, "\n")
                 pass
-                #print("Gold seq does not match")
+                # print("Gold 序列不匹配")
                 #return False
 
             all_bits = np.concatenate((bits[1:]))
         else:
-            # for legacy drones (missing symbol 0)
+            # 兼容旧机型：旧帧缺少符号 0，因此不跳过第一组符号。
             all_bits = np.concatenate((bits[0:]))
 
-        #print("Descramble",len(all_bits),"bits")
-        # descramble
+        # 用 Gold 序列解扰。
         plo = gold(1600, len(all_bits), 0x12345678) ^ all_bits
 
-        # extract from cyclic buffer
+        # 从循环缓冲中抽取 turbo 编码后的系统位；此处忽略校验流。
         plo = np.concatenate((plo, plo))
         plo = plo.astype(int)
         offset = 4148
 
         systematic_stream = plo[offset:offset + 1412]
 
-        # extract payload (ignore parity streams)
+        # 撤销 rate matching，得到载荷比特。
         p_decoded = rm_turbo_rx(systematic_stream)
 
-        # convert into bytes
+        # 按大端 bit 顺序打包成字节，交给 DroneIDPacket 解析结构字段。
         ba = bitarray.bitarray(list(p_decoded), endian='big')
         return ba.tobytes()
 
