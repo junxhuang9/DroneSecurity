@@ -1,4 +1,3 @@
-from distutils.log import debug
 import numpy as np
 import matplotlib.pyplot as plt
 from packetizer import find_packet_candidate_time

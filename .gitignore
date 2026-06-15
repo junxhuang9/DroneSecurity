@@ -5,6 +5,7 @@
 #ext_drone_id
 receive_test.raw
 .vscode
+.matplotlib-cache/
 samples/
 pkt_sym*
 

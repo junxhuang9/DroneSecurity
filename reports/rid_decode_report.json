@@ -1,0 +1,731 @@
+{
+  "generated_at": "2026-06-15T09:39:52+08:00",
+  "reports": [
+    {
+      "sample": "samples\\mini2_sm",
+      "size_bytes": 5820000,
+      "sample_rate_hz": 50000000.0,
+      "command": [
+        "D:\\JXsrc\\CodeLab\\DroneSecurity\\.venv\\Scripts\\python.exe",
+        "D:\\JXsrc\\CodeLab\\DroneSecurity\\src\\droneid_receiver_offline.py",
+        "-i",
+        "D:\\JXsrc\\CodeLab\\DroneSecurity\\samples\\mini2_sm",
+        "-s",
+        "50000000.0"
+      ],
+      "returncode": 0,
+      "stderr": "D:\\JXsrc\\CodeLab\\DroneSecurity\\src\\packetizer.py:40: UserWarning: Input data is complex, switching to return_onesided=False\n  f, t, Zxx = signal.stft(raw_data, Fs, nfft=64, nperseg=64)\n",
+      "stdout": "Drone-ID Frame Detection\nPacket Type: droneid\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #0, start 0.000159, end 0.000804, length 0.000644, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #1, start 0.001133, end 0.001778, length 0.000644, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #2, start 0.002106, end 0.002750, length 0.000644, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #3, start 0.005016, end 0.005661, length 0.000644, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #4, start 0.008889, end 0.009535, length 0.000646, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #5, start 0.009864, end 0.010509, length 0.000644, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #6, start 0.010834, end 0.011479, length 0.000644, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #7, start 0.011800, end 0.012445, length 0.000644, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #8, start 0.012769, end 0.013414, length 0.000644, cfo 9619140.625000\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n9619140.625\nPacket #9, start 0.013745, end 0.014390, length 0.000644, cfo 9619140.625000\nFound 10 Drone-ID RF frames in spectrum capture.\n################## Decoding Frame 1/10 ##################\nget_packet_samples pkt=0\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36725, offset=-9619140.625, Fs=50000000.0\nFFO: -5791.512766\n10580, offset=5791.512765718189, Fs=15360000.0\nFound ZC sequences: 600 147\n10580, offset=5791.512765718189, Fs=15360000.0\nZC Offset: -4.189189\n10580, offset=5791.512765718189, Fs=15360000.0\n10580, offset=5791.512765718189, Fs=15360000.0\n10580, offset=5791.512765718189, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 786,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecWasHere \",\n    \"longitude\": 0.0,\n    \"latitude\": 0.0,\n    \"altitude\": 0.0,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9575,\n    \"gps_time\": 1648558221652,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 7.266528392911369,\n    \"longitude_home\": 0.0,\n    \"latitude_home\": 0.0,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\",\n    \"crc-packet\": \"f557\",\n    \"crc-calculated\": \"f557\"\n}\n################## Decoding Frame 2/10 ##################\nget_packet_samples pkt=1\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36756, offset=-9619140.625, Fs=50000000.0\nFFO: -5799.489870\n10585, offset=5799.489869575087, Fs=15360000.0\nFound ZC sequences: 600 147\n10585, offset=5799.489869575087, Fs=15360000.0\nZC Offset: -3.978979\n10585, offset=5799.489869575087, Fs=15360000.0\n10585, offset=5799.489869575087, Fs=15360000.0\n10585, offset=5799.489869575087, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 787,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecWasHere \",\n    \"longitude\": 0.0,\n    \"latitude\": 0.0,\n    \"altitude\": 0.0,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9578,\n    \"gps_time\": 1648558226658,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 7.266528392911369,\n    \"longitude_home\": 0.0,\n    \"latitude_home\": 0.0,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\",\n    \"crc-packet\": \"8ffa\",\n    \"crc-calculated\": \"8ffa\"\n}\n################## Decoding Frame 3/10 ##################\nget_packet_samples pkt=2\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36724, offset=-9619140.625, Fs=50000000.0\nFFO: -5770.480602\n10580, offset=5770.480601952904, Fs=15360000.0\nFound ZC sequences: 600 147\n10580, offset=5770.480601952904, Fs=15360000.0\nZC Offset: -4.009009\n10580, offset=5770.480601952904, Fs=15360000.0\n10580, offset=5770.480601952904, Fs=15360000.0\n10580, offset=5770.480601952904, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 788,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecWasHere \",\n    \"longitude\": 0.0,\n    \"latitude\": 0.0,\n    \"altitude\": 0.0,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9573,\n    \"gps_time\": 1648558226658,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 7.266528392911369,\n    \"longitude_home\": 0.0,\n    \"latitude_home\": 0.0,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\",\n    \"crc-packet\": \"fd75\",\n    \"crc-calculated\": \"fd75\"\n}\n################## Decoding Frame 4/10 ##################\nget_packet_samples pkt=3\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36756, offset=-9619140.625, Fs=50000000.0\nFFO: -5891.284258\n10586, offset=5891.2842582537505, Fs=15360000.0\nFound ZC sequences: 600 147\n10586, offset=5891.2842582537505, Fs=15360000.0\nZC Offset: -4.519520\n10586, offset=5891.2842582537505, Fs=15360000.0\n10586, offset=5891.2842582537505, Fs=15360000.0\n10586, offset=5891.2842582537505, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 788,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecWasHere \",\n    \"longitude\": 0.0,\n    \"latitude\": 0.0,\n    \"altitude\": 0.0,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9573,\n    \"gps_time\": 1648558226658,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 7.266528392911369,\n    \"longitude_home\": 0.0,\n    \"latitude_home\": 0.0,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\",\n    \"crc-packet\": \"fd75\",\n    \"crc-calculated\": \"fd75\"\n}\n################## Decoding Frame 5/10 ##################\nget_packet_samples pkt=4\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36820, offset=-9619140.625, Fs=50000000.0\nFFO: -5767.644410\n10605, offset=5767.64441040704, Fs=15360000.0\nFound ZC sequences: 600 147\n10605, offset=5767.64441040704, Fs=15360000.0\nZC Offset: -3.738739\n10605, offset=5767.64441040704, Fs=15360000.0\n10605, offset=5767.64441040704, Fs=15360000.0\n10605, offset=5767.64441040704, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 789,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecWasHere \",\n    \"longitude\": 0.0,\n    \"latitude\": 0.0,\n    \"altitude\": 0.0,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9579,\n    \"gps_time\": 1648558226658,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 7.266528392911369,\n    \"longitude_home\": 0.0,\n    \"latitude_home\": 0.0,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\",\n    \"crc-packet\": \"b259\",\n    \"crc-calculated\": \"b259\"\n}\n################## Decoding Frame 6/10 ##################\nget_packet_samples pkt=5\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36756, offset=-9619140.625, Fs=50000000.0\nFFO: -5767.005178\n10587, offset=5767.00517769192, Fs=15360000.0\nFound ZC sequences: 600 147\n10587, offset=5767.00517769192, Fs=15360000.0\nZC Offset: -4.039039\n10587, offset=5767.00517769192, Fs=15360000.0\n10587, offset=5767.00517769192, Fs=15360000.0\n10587, offset=5767.00517769192, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 800,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecWasHere \",\n    \"longitude\": 0.0,\n    \"latitude\": 0.0,\n    \"altitude\": 0.0,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9583,\n    \"gps_time\": 1648558236636,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 7.266528392911369,\n    \"longitude_home\": 0.0,\n    \"latitude_home\": 0.0,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\",\n    \"crc-packet\": \"c82a\",\n    \"crc-calculated\": \"c82a\"\n}\n################## Decoding Frame 7/10 ##################\nget_packet_samples pkt=6\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36756, offset=-9619140.625, Fs=50000000.0\nFFO: -5743.772410\n10581, offset=5743.772409631261, Fs=15360000.0\nFound ZC sequences: 600 147\n10581, offset=5743.772409631261, Fs=15360000.0\nZC Offset: -4.699700\n10581, offset=5743.772409631261, Fs=15360000.0\n10581, offset=5743.772409631261, Fs=15360000.0\n10581, offset=5743.772409631261, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 804,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecWasHere \",\n    \"longitude\": 0.0,\n    \"latitude\": 0.0,\n    \"altitude\": 2496.8,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9581,\n    \"gps_time\": 1648558241642,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 7.266528392911369,\n    \"longitude_home\": 4.583660396601216e-05,\n    \"latitude_home\": 0.0,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\",\n    \"crc-packet\": \"d984\",\n    \"crc-calculated\": \"bdf7\"\n}\nCRC error!\n################## Decoding Frame 8/10 ##################\nget_packet_samples pkt=7\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36724, offset=-9619140.625, Fs=50000000.0\nFFO: -5763.029731\n10579, offset=5763.029730948023, Fs=15360000.0\nFound ZC sequences: 600 147\n10579, offset=5763.029730948023, Fs=15360000.0\nZC Offset: -3.888889\n10579, offset=5763.029730948023, Fs=15360000.0\n10579, offset=5763.029730948023, Fs=15360000.0\n10579, offset=5763.029730948023, Fs=15360000.0\nFrame 7/10: Decoding failed.\n################## Decoding Frame 9/10 ##################\nget_packet_samples pkt=8\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36724, offset=-9619140.625, Fs=50000000.0\nFFO: -5750.640704\n10578, offset=5750.64070366859, Fs=15360000.0\nFound ZC sequences: 600 147\n10578, offset=5750.64070366859, Fs=15360000.0\nZC Offset: -4.159159\n10578, offset=5750.64070366859, Fs=15360000.0\n10578, offset=5750.64070366859, Fs=15360000.0\n10578, offset=5750.64070366859, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 805,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecWasHere \",\n    \"longitude\": 0.0,\n    \"latitude\": 0.0,\n    \"altitude\": 0.0,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9579,\n    \"gps_time\": 1648558241642,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 7.266528392911369,\n    \"longitude_home\": 0.0,\n    \"latitude_home\": 0.0,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\",\n    \"crc-packet\": \"ed5a\",\n    \"crc-calculated\": \"ed5a\"\n}\n################## Decoding Frame 10/10 ##################\nget_packet_samples pkt=9\ncandidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz\ncandidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz\n36756, offset=-9619140.625, Fs=50000000.0\nFFO: -5779.284944\n10590, offset=5779.28494366049, Fs=15360000.0\nFound ZC sequences: 600 147\n10590, offset=5779.28494366049, Fs=15360000.0\nZC Offset: -3.678679\n10590, offset=5779.28494366049, Fs=15360000.0\n10590, offset=5779.28494366049, Fs=15360000.0\n10590, offset=5779.28494366049, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 806,\n    \"state_info\": 7955,\n    \"serial_number\": \"SysSecVasJeve \",\n    \"longitude\": 0.0,\n    \"latitude\": 96.13219276583798,\n    \"altitude\": 0.0,\n    \"height\": 0.0,\n    \"v_north\": 0,\n    \"v_east\": 0,\n    \"v_up\": 0,\n    \"d_1_angle\": 9580,\n    \"gps_time\": 1648558225258,\n    \"app_lat\": 51.447176178716916,\n    \"app_lon\": 391.77769820034035,\n    \"longitude_home\": 0.0,\n    \"latitude_home\": 0.002933542653824778,\n    \"device_type\": \"Mini 2\",\n    \"uuid_len\": 0,\n    \"uuid\": \"\\u0004\\u0000\\u0000\\u0000\\u0004\\u0000\\u0004\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0000\\u0001@\",\n    \"crc-packet\": \"bf49\",\n    \"crc-calculated\": \"3130\"\n}\nCRC error!\n\n\n\nFrame detection: 10 candidates\nDecoder: 9 total, CRC OK: 7 (2 CRC errors)\nDrone Coordinates:\nApp Coordinates:\n(51.447176178716916, 7.266528392911369)\n(51.447176178716916, 7.266528392911369)\n(51.447176178716916, 7.266528392911369)\n(51.447176178716916, 7.266528392911369)\n(51.447176178716916, 7.266528392911369)\n(51.447176178716916, 7.266528392911369)\n(51.447176178716916, 7.266528392911369)\n",
+      "detected_candidates": 10,
+      "decoder_total": 9,
+      "decoder_crc_ok": 7,
+      "decoder_crc_errors": 2,
+      "candidates": [
+        {
+          "index": 0,
+          "start_s": 0.000159,
+          "end_s": 0.000804,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 1,
+          "start_s": 0.001133,
+          "end_s": 0.001778,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 2,
+          "start_s": 0.002106,
+          "end_s": 0.00275,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 3,
+          "start_s": 0.005016,
+          "end_s": 0.005661,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 4,
+          "start_s": 0.008889,
+          "end_s": 0.009535,
+          "length_s": 0.000646,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 5,
+          "start_s": 0.009864,
+          "end_s": 0.010509,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 6,
+          "start_s": 0.010834,
+          "end_s": 0.011479,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 7,
+          "start_s": 0.0118,
+          "end_s": 0.012445,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 8,
+          "start_s": 0.012769,
+          "end_s": 0.013414,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        },
+        {
+          "index": 9,
+          "start_s": 0.013745,
+          "end_s": 0.01439,
+          "length_s": 0.000644,
+          "cfo_hz": 9619140.625
+        }
+      ],
+      "frames": [
+        {
+          "frame_number": 1,
+          "frame_total": 10,
+          "packet_index": 0,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36725, offset=-9619140.625, Fs=50000000.0",
+            "10580, offset=5791.512765718189, Fs=15360000.0",
+            "10580, offset=5791.512765718189, Fs=15360000.0",
+            "10580, offset=5791.512765718189, Fs=15360000.0",
+            "10580, offset=5791.512765718189, Fs=15360000.0",
+            "10580, offset=5791.512765718189, Fs=15360000.0"
+          ],
+          "ffo_hz": -5791.512766,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -4.189189,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 786,
+            "state_info": 7955,
+            "serial_number": "SysSecWasHere ",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "altitude": 0.0,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9575,
+            "gps_time": 1648558221652,
+            "app_lat": 51.447176178716916,
+            "app_lon": 7.266528392911369,
+            "longitude_home": 0.0,
+            "latitude_home": 0.0,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "",
+            "crc-packet": "f557",
+            "crc-calculated": "f557"
+          },
+          "crc_ok": true,
+          "failed": false
+        },
+        {
+          "frame_number": 2,
+          "frame_total": 10,
+          "packet_index": 1,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36756, offset=-9619140.625, Fs=50000000.0",
+            "10585, offset=5799.489869575087, Fs=15360000.0",
+            "10585, offset=5799.489869575087, Fs=15360000.0",
+            "10585, offset=5799.489869575087, Fs=15360000.0",
+            "10585, offset=5799.489869575087, Fs=15360000.0",
+            "10585, offset=5799.489869575087, Fs=15360000.0"
+          ],
+          "ffo_hz": -5799.48987,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -3.978979,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 787,
+            "state_info": 7955,
+            "serial_number": "SysSecWasHere ",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "altitude": 0.0,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9578,
+            "gps_time": 1648558226658,
+            "app_lat": 51.447176178716916,
+            "app_lon": 7.266528392911369,
+            "longitude_home": 0.0,
+            "latitude_home": 0.0,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "",
+            "crc-packet": "8ffa",
+            "crc-calculated": "8ffa"
+          },
+          "crc_ok": true,
+          "failed": false
+        },
+        {
+          "frame_number": 3,
+          "frame_total": 10,
+          "packet_index": 2,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36724, offset=-9619140.625, Fs=50000000.0",
+            "10580, offset=5770.480601952904, Fs=15360000.0",
+            "10580, offset=5770.480601952904, Fs=15360000.0",
+            "10580, offset=5770.480601952904, Fs=15360000.0",
+            "10580, offset=5770.480601952904, Fs=15360000.0",
+            "10580, offset=5770.480601952904, Fs=15360000.0"
+          ],
+          "ffo_hz": -5770.480602,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -4.009009,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 788,
+            "state_info": 7955,
+            "serial_number": "SysSecWasHere ",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "altitude": 0.0,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9573,
+            "gps_time": 1648558226658,
+            "app_lat": 51.447176178716916,
+            "app_lon": 7.266528392911369,
+            "longitude_home": 0.0,
+            "latitude_home": 0.0,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "",
+            "crc-packet": "fd75",
+            "crc-calculated": "fd75"
+          },
+          "crc_ok": true,
+          "failed": false
+        },
+        {
+          "frame_number": 4,
+          "frame_total": 10,
+          "packet_index": 3,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36756, offset=-9619140.625, Fs=50000000.0",
+            "10586, offset=5891.2842582537505, Fs=15360000.0",
+            "10586, offset=5891.2842582537505, Fs=15360000.0",
+            "10586, offset=5891.2842582537505, Fs=15360000.0",
+            "10586, offset=5891.2842582537505, Fs=15360000.0",
+            "10586, offset=5891.2842582537505, Fs=15360000.0"
+          ],
+          "ffo_hz": -5891.284258,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -4.51952,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 788,
+            "state_info": 7955,
+            "serial_number": "SysSecWasHere ",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "altitude": 0.0,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9573,
+            "gps_time": 1648558226658,
+            "app_lat": 51.447176178716916,
+            "app_lon": 7.266528392911369,
+            "longitude_home": 0.0,
+            "latitude_home": 0.0,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "",
+            "crc-packet": "fd75",
+            "crc-calculated": "fd75"
+          },
+          "crc_ok": true,
+          "failed": false
+        },
+        {
+          "frame_number": 5,
+          "frame_total": 10,
+          "packet_index": 4,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36820, offset=-9619140.625, Fs=50000000.0",
+            "10605, offset=5767.64441040704, Fs=15360000.0",
+            "10605, offset=5767.64441040704, Fs=15360000.0",
+            "10605, offset=5767.64441040704, Fs=15360000.0",
+            "10605, offset=5767.64441040704, Fs=15360000.0",
+            "10605, offset=5767.64441040704, Fs=15360000.0"
+          ],
+          "ffo_hz": -5767.64441,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -3.738739,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 789,
+            "state_info": 7955,
+            "serial_number": "SysSecWasHere ",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "altitude": 0.0,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9579,
+            "gps_time": 1648558226658,
+            "app_lat": 51.447176178716916,
+            "app_lon": 7.266528392911369,
+            "longitude_home": 0.0,
+            "latitude_home": 0.0,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "",
+            "crc-packet": "b259",
+            "crc-calculated": "b259"
+          },
+          "crc_ok": true,
+          "failed": false
+        },
+        {
+          "frame_number": 6,
+          "frame_total": 10,
+          "packet_index": 5,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36756, offset=-9619140.625, Fs=50000000.0",
+            "10587, offset=5767.00517769192, Fs=15360000.0",
+            "10587, offset=5767.00517769192, Fs=15360000.0",
+            "10587, offset=5767.00517769192, Fs=15360000.0",
+            "10587, offset=5767.00517769192, Fs=15360000.0",
+            "10587, offset=5767.00517769192, Fs=15360000.0"
+          ],
+          "ffo_hz": -5767.005178,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -4.039039,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 800,
+            "state_info": 7955,
+            "serial_number": "SysSecWasHere ",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "altitude": 0.0,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9583,
+            "gps_time": 1648558236636,
+            "app_lat": 51.447176178716916,
+            "app_lon": 7.266528392911369,
+            "longitude_home": 0.0,
+            "latitude_home": 0.0,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "",
+            "crc-packet": "c82a",
+            "crc-calculated": "c82a"
+          },
+          "crc_ok": true,
+          "failed": false
+        },
+        {
+          "frame_number": 7,
+          "frame_total": 10,
+          "packet_index": 6,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36756, offset=-9619140.625, Fs=50000000.0",
+            "10581, offset=5743.772409631261, Fs=15360000.0",
+            "10581, offset=5743.772409631261, Fs=15360000.0",
+            "10581, offset=5743.772409631261, Fs=15360000.0",
+            "10581, offset=5743.772409631261, Fs=15360000.0",
+            "10581, offset=5743.772409631261, Fs=15360000.0"
+          ],
+          "ffo_hz": -5743.77241,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -4.6997,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 804,
+            "state_info": 7955,
+            "serial_number": "SysSecWasHere ",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "altitude": 2496.8,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9581,
+            "gps_time": 1648558241642,
+            "app_lat": 51.447176178716916,
+            "app_lon": 7.266528392911369,
+            "longitude_home": 4.583660396601216e-05,
+            "latitude_home": 0.0,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "",
+            "crc-packet": "d984",
+            "crc-calculated": "bdf7"
+          },
+          "crc_ok": false,
+          "failed": false
+        },
+        {
+          "frame_number": 8,
+          "frame_total": 10,
+          "packet_index": 7,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36724, offset=-9619140.625, Fs=50000000.0",
+            "10579, offset=5763.029730948023, Fs=15360000.0",
+            "10579, offset=5763.029730948023, Fs=15360000.0",
+            "10579, offset=5763.029730948023, Fs=15360000.0",
+            "10579, offset=5763.029730948023, Fs=15360000.0",
+            "10579, offset=5763.029730948023, Fs=15360000.0"
+          ],
+          "ffo_hz": -5763.029731,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -3.888889,
+          "payload": null,
+          "crc_ok": false,
+          "failed": true
+        },
+        {
+          "frame_number": 9,
+          "frame_total": 10,
+          "packet_index": 8,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36724, offset=-9619140.625, Fs=50000000.0",
+            "10578, offset=5750.64070366859, Fs=15360000.0",
+            "10578, offset=5750.64070366859, Fs=15360000.0",
+            "10578, offset=5750.64070366859, Fs=15360000.0",
+            "10578, offset=5750.64070366859, Fs=15360000.0",
+            "10578, offset=5750.64070366859, Fs=15360000.0"
+          ],
+          "ffo_hz": -5750.640704,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -4.159159,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 805,
+            "state_info": 7955,
+            "serial_number": "SysSecWasHere ",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "altitude": 0.0,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9579,
+            "gps_time": 1648558241642,
+            "app_lat": 51.447176178716916,
+            "app_lon": 7.266528392911369,
+            "longitude_home": 0.0,
+            "latitude_home": 0.0,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "",
+            "crc-packet": "ed5a",
+            "crc-calculated": "ed5a"
+          },
+          "crc_ok": true,
+          "failed": false
+        },
+        {
+          "frame_number": 10,
+          "frame_total": 10,
+          "packet_index": 9,
+          "candidate_bands": [
+            "candidate band fstart: 219726.56, fend: -244140.62, bw: 0.46 MHz",
+            "candidate band fstart: 14233398.44, fend: 5004882.81, bw: 9.23 MHz"
+          ],
+          "carrier_offsets": [
+            "36756, offset=-9619140.625, Fs=50000000.0",
+            "10590, offset=5779.28494366049, Fs=15360000.0",
+            "10590, offset=5779.28494366049, Fs=15360000.0",
+            "10590, offset=5779.28494366049, Fs=15360000.0",
+            "10590, offset=5779.28494366049, Fs=15360000.0",
+            "10590, offset=5779.28494366049, Fs=15360000.0"
+          ],
+          "ffo_hz": -5779.284944,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -3.678679,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 806,
+            "state_info": 7955,
+            "serial_number": "SysSecVasJeve ",
+            "longitude": 0.0,
+            "latitude": 96.13219276583798,
+            "altitude": 0.0,
+            "height": 0.0,
+            "v_north": 0,
+            "v_east": 0,
+            "v_up": 0,
+            "d_1_angle": 9580,
+            "gps_time": 1648558225258,
+            "app_lat": 51.447176178716916,
+            "app_lon": 391.77769820034035,
+            "longitude_home": 0.0,
+            "latitude_home": 0.002933542653824778,
+            "device_type": "Mini 2",
+            "uuid_len": 0,
+            "uuid": "\u0004\u0000\u0000\u0000\u0004\u0000\u0004\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001@",
+            "crc-packet": "bf49",
+            "crc-calculated": "3130"
+          },
+          "crc_ok": false,
+          "failed": false
+        }
+      ],
+      "spectrogram_image": "assets\\mini2_sm_rid_spectrogram.png"
+    },
+    {
+      "sample": "samples\\mavic_air_2",
+      "size_bytes": 1802240,
+      "sample_rate_hz": 50000000.0,
+      "command": [
+        "D:\\JXsrc\\CodeLab\\DroneSecurity\\.venv\\Scripts\\python.exe",
+        "D:\\JXsrc\\CodeLab\\DroneSecurity\\src\\droneid_receiver_offline.py",
+        "-i",
+        "D:\\JXsrc\\CodeLab\\DroneSecurity\\samples\\mavic_air_2",
+        "-s",
+        "50000000.0"
+      ],
+      "returncode": 0,
+      "stderr": "D:\\JXsrc\\CodeLab\\DroneSecurity\\src\\packetizer.py:40: UserWarning: Input data is complex, switching to return_onesided=False\n  f, t, Zxx = signal.stft(raw_data, Fs, nfft=64, nperseg=64)\n",
+      "stdout": "Drone-ID Frame Detection\nPacket Type: droneid\ncandidate band fstart: 6591796.88, fend: -2612304.69, bw: 9.20 MHz\n1989746.09375\nPacket #0, start 0.001859, end 0.002504, length 0.000644, cfo 1989746.093750\ncandidate band fstart: 6567382.81, fend: -2612304.69, bw: 9.18 MHz\n1977539.0625\nPacket #1, start 0.002572, end 0.003216, length 0.000644, cfo 1977539.062500\ncandidate band fstart: -7861328.12, fend: -17065429.69, bw: 9.20 MHz\n-12463378.90625\nPacket #2, start 0.003308, end 0.003953, length 0.000644, cfo -12463378.906250\nFound 3 Drone-ID RF frames in spectrum capture.\n################## Decoding Frame 1/3 ##################\nget_packet_samples pkt=0\ncandidate band fstart: 6591796.88, fend: -2612304.69, bw: 9.20 MHz\n36723, offset=-1989746.09375, Fs=50000000.0\nFFO: 2601.624024\n10583, offset=-2601.624023970976, Fs=15360000.0\nFound ZC sequences: 600 147\n10583, offset=-2601.624023970976, Fs=15360000.0\nZC Offset: -2.957958\n10583, offset=-2601.624023970976, Fs=15360000.0\n10583, offset=-2601.624023970976, Fs=15360000.0\n10583, offset=-2601.624023970976, Fs=15360000.0\nFrame 0/3: Decoding failed.\n################## Decoding Frame 2/3 ##################\nget_packet_samples pkt=1\ncandidate band fstart: 6567382.81, fend: -2612304.69, bw: 9.18 MHz\n36724, offset=-1977539.0625, Fs=50000000.0\nFFO: -269.628644\n10581, offset=269.6286443365169, Fs=15360000.0\nFound ZC sequences: 600 147\n10581, offset=269.6286443365169, Fs=15360000.0\nZC Offset: -1.396396\n10581, offset=269.6286443365169, Fs=15360000.0\n10581, offset=269.6286443365169, Fs=15360000.0\n10581, offset=269.6286443365169, Fs=15360000.0\nFrame 1/3: Decoding failed.\n################## Decoding Frame 3/3 ##################\nget_packet_samples pkt=2\ncandidate band fstart: -7861328.12, fend: -17065429.69, bw: 9.20 MHz\n36724, offset=12463378.90625, Fs=50000000.0\nFFO: -6458.548967\n10579, offset=6458.548966919529, Fs=15360000.0\nFound ZC sequences: 600 147\n10579, offset=6458.548966919529, Fs=15360000.0\nZC Offset: -5.210210\n10579, offset=6458.548966919529, Fs=15360000.0\n10579, offset=6458.548966919529, Fs=15360000.0\n10579, offset=6458.548966919529, Fs=15360000.0\n## Drone-ID Payload ##\n{\n    \"pkt_len\": 88,\n    \"unk\": 16,\n    \"version\": 2,\n    \"sequence_number\": 591,\n    \"state_info\": 8183,\n    \"serial_number\": \"1WNBH3900201N1\",\n    \"longitude\": 7.26721594197086,\n    \"latitude\": 51.44633393111904,\n    \"altitude\": 42.97,\n    \"height\": 12.8,\n    \"v_north\": -2,\n    \"v_east\": 2,\n    \"v_up\": 26,\n    \"d_1_angle\": -13295,\n    \"gps_time\": 1650542026258,\n    \"app_lat\": 51.44620788045814,\n    \"app_lon\": 7.267101350460944,\n    \"longitude_home\": 7.267353451782758,\n    \"latitude_home\": 51.4462594466376,\n    \"device_type\": \"Mavic Air 2\",\n    \"uuid_len\": 19,\n    \"uuid\": \"1143635532171534336\",\n    \"crc-packet\": \"b048\",\n    \"crc-calculated\": \"b048\"\n}\n\n\n\nFrame detection: 3 candidates\nDecoder: 1 total, CRC OK: 1 (0 CRC errors)\nDrone Coordinates:\n(51.44633393111904, 7.26721594197086, 12.8)\nApp Coordinates:\n(51.44620788045814, 7.267101350460944)\n",
+      "detected_candidates": 3,
+      "decoder_total": 1,
+      "decoder_crc_ok": 1,
+      "decoder_crc_errors": 0,
+      "candidates": [
+        {
+          "index": 0,
+          "start_s": 0.001859,
+          "end_s": 0.002504,
+          "length_s": 0.000644,
+          "cfo_hz": 1989746.09375
+        },
+        {
+          "index": 1,
+          "start_s": 0.002572,
+          "end_s": 0.003216,
+          "length_s": 0.000644,
+          "cfo_hz": 1977539.0625
+        },
+        {
+          "index": 2,
+          "start_s": 0.003308,
+          "end_s": 0.003953,
+          "length_s": 0.000644,
+          "cfo_hz": -12463378.90625
+        }
+      ],
+      "frames": [
+        {
+          "frame_number": 1,
+          "frame_total": 3,
+          "packet_index": 0,
+          "candidate_bands": [
+            "candidate band fstart: 6591796.88, fend: -2612304.69, bw: 9.20 MHz"
+          ],
+          "carrier_offsets": [
+            "36723, offset=-1989746.09375, Fs=50000000.0",
+            "10583, offset=-2601.624023970976, Fs=15360000.0",
+            "10583, offset=-2601.624023970976, Fs=15360000.0",
+            "10583, offset=-2601.624023970976, Fs=15360000.0",
+            "10583, offset=-2601.624023970976, Fs=15360000.0",
+            "10583, offset=-2601.624023970976, Fs=15360000.0"
+          ],
+          "ffo_hz": 2601.624024,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -2.957958,
+          "payload": null,
+          "crc_ok": false,
+          "failed": true
+        },
+        {
+          "frame_number": 2,
+          "frame_total": 3,
+          "packet_index": 1,
+          "candidate_bands": [
+            "candidate band fstart: 6567382.81, fend: -2612304.69, bw: 9.18 MHz"
+          ],
+          "carrier_offsets": [
+            "36724, offset=-1977539.0625, Fs=50000000.0",
+            "10581, offset=269.6286443365169, Fs=15360000.0",
+            "10581, offset=269.6286443365169, Fs=15360000.0",
+            "10581, offset=269.6286443365169, Fs=15360000.0",
+            "10581, offset=269.6286443365169, Fs=15360000.0",
+            "10581, offset=269.6286443365169, Fs=15360000.0"
+          ],
+          "ffo_hz": -269.628644,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -1.396396,
+          "payload": null,
+          "crc_ok": false,
+          "failed": true
+        },
+        {
+          "frame_number": 3,
+          "frame_total": 3,
+          "packet_index": 2,
+          "candidate_bands": [
+            "candidate band fstart: -7861328.12, fend: -17065429.69, bw: 9.20 MHz"
+          ],
+          "carrier_offsets": [
+            "36724, offset=12463378.90625, Fs=50000000.0",
+            "10579, offset=6458.548966919529, Fs=15360000.0",
+            "10579, offset=6458.548966919529, Fs=15360000.0",
+            "10579, offset=6458.548966919529, Fs=15360000.0",
+            "10579, offset=6458.548966919529, Fs=15360000.0",
+            "10579, offset=6458.548966919529, Fs=15360000.0"
+          ],
+          "ffo_hz": -6458.548967,
+          "zc_sequences": [
+            600,
+            147
+          ],
+          "zc_offset": -5.21021,
+          "payload": {
+            "pkt_len": 88,
+            "unk": 16,
+            "version": 2,
+            "sequence_number": 591,
+            "state_info": 8183,
+            "serial_number": "1WNBH3900201N1",
+            "longitude": 7.26721594197086,
+            "latitude": 51.44633393111904,
+            "altitude": 42.97,
+            "height": 12.8,
+            "v_north": -2,
+            "v_east": 2,
+            "v_up": 26,
+            "d_1_angle": -13295,
+            "gps_time": 1650542026258,
+            "app_lat": 51.44620788045814,
+            "app_lon": 7.267101350460944,
+            "longitude_home": 7.267353451782758,
+            "latitude_home": 51.4462594466376,
+            "device_type": "Mavic Air 2",
+            "uuid_len": 19,
+            "uuid": "1143635532171534336",
+            "crc-packet": "b048",
+            "crc-calculated": "b048"
+          },
+          "crc_ok": true,
+          "failed": false
+        }
+      ],
+      "spectrogram_image": "assets\\mavic_air_2_rid_spectrogram.png"
+    }
+  ]
+}
